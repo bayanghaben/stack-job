@@ -9,8 +9,6 @@ import { ToastContainer } from "react-toastify";
 function App() {
   return (
     <div>
-      <NavBar />
-      <SideMenu />
       <ToastContainer />
       <AppRoutes />
     </div>

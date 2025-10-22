@@ -87,6 +87,7 @@ const Login = () => {
     e.preventDefault();
     console.log("Login data:", formData);
     login(formData.email, formData.password);
+    
     // Add your login logic here
   };
 

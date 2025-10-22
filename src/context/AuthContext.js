@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useReducer } from "react";
+import { useNavigate } from "react-router";
 import { toast } from "react-toastify";
 const AUTH_ACTIONS = {
   LOGIN: "LOGIN",
@@ -7,7 +8,7 @@ const AUTH_ACTIONS = {
 };
 const initialState = {
   user: null,
-  isAuthenticated: false,
+  isAuthenticated: true,
 };
 function authReducer(state, action) {
   switch (action.type) {
@@ -31,6 +32,7 @@ function authReducer(state, action) {
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(authReducer, initialState);
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
@@ -54,6 +56,7 @@ export const AuthProvider = ({ children }) => {
     }
     localStorage.setItem("user", JSON.stringify(storedUser));
     if (storedUser) dispatch({ type: AUTH_ACTIONS.LOGIN, payload: storedUser });
+    navigate("/");
   };
   const register = (email, password) => {
     const storedUsers = JSON.parse(localStorage.getItem("users"));
@@ -63,14 +66,16 @@ export const AuthProvider = ({ children }) => {
       password,
     };
     storedUsers.push(newUser);
-    localStorage.setItem("users", storedUsers);
+    localStorage.setItem("users", JSON.stringify(storedUsers));
     localStorage.setItem("user", JSON.stringify(newUser));
 
     dispatch({ type: AUTH_ACTIONS.REGISTER, payload: newUser });
+    navigate("/");
   };
   const logout = () => {
     localStorage.removeItem("user");
     dispatch({ type: AUTH_ACTIONS.LOGOUT });
+    navigate("/login");
   };
   const value = {
     login,

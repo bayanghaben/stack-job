@@ -25,6 +25,7 @@ import {
   Google,
 } from "@mui/icons-material";
 import AuthLayout from "../components/common/AuthLayout";
+import { useAuth } from "../context/AuthContext";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -36,7 +37,7 @@ const Register = () => {
     confirmPassword: "",
     terms: false,
   });
-
+  const { register } = useAuth();
   const handleChange = (e) => {
     const { name, value, checked } = e.target;
     setFormData((prev) => ({
@@ -48,6 +49,7 @@ const Register = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Signup data:", formData);
+    register(formData.email, formData.password);
     // Add your signup logic here
   };
 
