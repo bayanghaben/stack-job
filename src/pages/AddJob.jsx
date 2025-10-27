@@ -8,10 +8,18 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+
 import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
+import { useDispatch } from "react-redux";
+import { addJob } from "../store/slices/jobSlice";
 function AddJob() {
-  const [formData, setFormData] = useState({
+  const dispatch = useDispatch();
+  const initialState = {
     position: "",
     company: "",
     location: "",
@@ -19,12 +27,12 @@ function AddJob() {
     jobURL: "",
     status: "applied",
     dateApplied: "",
-    contact: [{ mathod: "", value: "" }],
+    phone: "",
+    email: "",
     notes: "",
-  });
-  const handleSubmit = (e) => {
-    e.preventDefault();
   };
+  const [formData, setFormData] = useState(initialState);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -32,18 +40,26 @@ function AddJob() {
       [name]: value,
     }));
   };
-  const handleContactChange = (index, feild, value) => {
-    const updatedcontacts = [...formData.contact];
-    updatedcontacts[index][feild] = value;
-    setFormData({ ...formData, contact: updatedcontacts });
-  };
 
+  const handleSubmitJob = (e) => {
+    e.preventDefault();
+    dispatch(addJob(formData));
+    setFormData(initialState);
+  };
   return (
-    <div style={{ padding: "20px" }}>
+    <div style={{ padding: "20px", margin: "auto" }}>
       <Typography variant="h1"> Add New Job Application</Typography>
       <Card sx={{ marginTop: "20px" }}>
         <CardContent>
-          <form onSubmit={handleSubmit} style={{ padding: "5px" }}>
+          <form
+            onSubmit={handleSubmitJob}
+            style={{
+              padding: "5px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "10px",
+            }}
+          >
             <TextField
               sx={{ marginTop: "5px" }}
               fullWidth
@@ -100,61 +116,54 @@ function AddJob() {
               value={formData.dateApplied}
               onChange={handleChange}
               name="dateApplied"
-            />
-            <Box
-              py={1}
-              style={{
-                display: "flex",
-                width: "100%",
-                height: "100%",
-                alignItems: "center",
-
-                gap: "5px",
+              InputLabelProps={{
+                shrink: true,
               }}
-            >
-              {formData.contact.map((contact, index) => (
-                <Box
-                  key={index}
-                  sx={{
-                    display: "flex",
-                    gap: "5px",
-                    width: "85%",
-                  }}
-                >
-                  <TextField
-                    sx={{ width: "25%" }}
-                    label={"Contact method"}
-                    value={contact.mathod}
-                    onChange={(e) =>
-                      handleContactChange(index, "method", e.target.value)
-                    }
-                  />
-                  <TextField
-                    sx={{ width: "75%" }}
-                    label={"Contact Value"}
-                    value={contact.value}
-                    onChange={(e) =>
-                      handleContactChange(index, "value", e.target.value)
-                    }
-                  />
-                </Box>
-              ))}{" "}
-              <Button
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  width: "15%",
-                  backgroundColor: "#0F172A",
-                  color: "#fff",
-                  height: "54px",
-                  alignItems: "center",
-                  borderRadius: "10px",
-                  cursor: "pointer",
-                }}
+            />
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Status</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={formData.status}
+                label="Status"
+                name="status"
+                onChange={handleChange}
               >
-                <AddIcon />
-              </Button>
-            </Box>
+                <MenuItem value={1}>Applied</MenuItem>
+                <MenuItem value={2}>Rejected</MenuItem>
+                <MenuItem value={3}>Accepted</MenuItem>
+              </Select>
+            </FormControl>
+
+            <TextField
+              label={"Phone number"}
+              value={formData.phone}
+              name="phone"
+              onChange={handleChange}
+            />
+            <TextField
+              label={"Email"}
+              value={formData.email}
+              name="email"
+              onChange={handleChange}
+            />
+            <TextField
+              id="outlined-multiline-static"
+              label="Notes"
+              multiline
+              rows={4}
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+            />
+            <Button
+              variant="contained"
+              sx={{ margin: "" }}
+              onClick={handleSubmitJob}
+            >
+              Save
+            </Button>
           </form>
         </CardContent>
       </Card>

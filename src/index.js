@@ -7,13 +7,17 @@ import { BrowserRouter } from "react-router";
 import { ThemeProvider } from "@emotion/react";
 import { darkTheme } from "./theme/theme.js";
 import { AuthProvider } from "./context/AuthContext.js";
+import {Provider} from 'react-redux'
+import { store } from "./store/store.js";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <ThemeProvider theme={darkTheme}>
         <AuthProvider>
-          <App />
+          <Provider store={store}>
+            <App />
+          </Provider>
         </AuthProvider>
       </ThemeProvider>
     </BrowserRouter>
