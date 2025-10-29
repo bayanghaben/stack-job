@@ -1,18 +1,58 @@
-import { Box } from "@mui/material";
+import {
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchJobs } from "../store/slices/jobSlice";
+import { deleteJob, fetchJobs } from "../store/slices/jobSlice";
+import { useNavigate } from "react-router";
+import AlertDialog from "../components/common/AlertDialog";
 
 function Home() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
+  const handleOpenDeleteDialog = () => {
+    setOpenDeleteDialog(true);
+  };
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+  const handleAddJob = () => {
+    navigate("/new-job");
+  };
   const data = useSelector((state) => state.jobs.jobs);
   console.log(data, "jobs");
   useEffect(() => {
     dispatch(fetchJobs());
   }, [dispatch]);
   return (
-    <div>
+    <div className="w-full p-5">
       {" "}
+      <div className="flex my-3 justify-between">
+        <FormControl sx={{ width: "250px" }}>
+          <InputLabel id="demo-simple-select-label">Status</InputLabel>
+          <Select
+            labelId="demo-simple-select-label"
+            id="demo-simple-select"
+            // value={formData.status}
+            label="Status"
+            name="status"
+            // onChange={handleChange}
+          >
+            <MenuItem value={1}>Applied</MenuItem>
+            <MenuItem value={2}>Rejected</MenuItem>
+            <MenuItem value={3}>Accepted</MenuItem>
+          </Select>
+        </FormControl>{" "}
+        <Button variant="contained" onClick={handleAddJob} className="w-40">
+          Add New Job
+        </Button>
+      </div>
       {data.length === 0 ? (
         <div className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-12 text-center">
           <Box className="w-16 h-16 text-slate-600 mx-auto mb-4" />
@@ -25,7 +65,7 @@ function Home() {
         data.map((job) => (
           <div
             key={job.id}
-            className="bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 hover:border-indigo-500/50 transition-all cursor-pointer group"
+            className="mt-4 bg-slate-800/50 backdrop-blur-sm border border-slate-700/50 rounded-xl p-6 hover:border-indigo-500/50 transition-all cursor-pointer group"
           >
             <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="flex-1">
@@ -60,10 +100,26 @@ function Home() {
                   Edit
                 </button>
                 <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
-                  View Details
+                  View
+                </button>
+                <button
+                  className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded-lg transition-colors"
+                  onClick={() => {
+                    handleOpenDeleteDialog();
+                  }}
+                >
+                  Delete
                 </button>
               </div>
             </div>
+            {openDeleteDialog && (
+              <AlertDialog
+                id={job.id}
+                postion={job.position}
+                open={openDeleteDialog}
+                handleClose={handleCloseDeleteDialog}
+              />
+            )}
           </div>
         ))
       )}

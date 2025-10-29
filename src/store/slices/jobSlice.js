@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { toast } from "react-toastify";
 
 const localStorageKey = "jobs";
 const jobSlice = createSlice({
@@ -9,20 +10,24 @@ const jobSlice = createSlice({
       const data = localStorage.getItem(localStorageKey)
         ? localStorage.getItem(localStorageKey)
         : [];
-      state.jobs = JSON.parse(data);
+      state.jobs = data ? JSON.parse(data) : [];
     },
     addJob: (state, action) => {
-      state.jobs.push(action.payload);
+      const newJob = { ...action.payload, id: Date.now() };
+      state.jobs.push(newJob);
       localStorage.setItem(localStorageKey, JSON.stringify(state.jobs));
+      toast.success("Job Added Successfully");
     },
     updateJob: (state, action) => {
       const updatedJob = state.jobs.find((j) => j.id == action.payload.id);
       state.jobs = [...state.jobs, updatedJob];
       localStorage.setItem(localStorageKey, JSON.stringify(state.jobs));
+      toast.success("Job Updated Successfully");
     },
     deleteJob: (state, action) => {
       const updatedJobs = state.jobs.filter((j) => j.id !== action.payload);
       localStorage.setItem(localStorageKey, JSON.stringify(updatedJobs));
+      toast.success("Job Deleted Successfully");
     },
   },
 });

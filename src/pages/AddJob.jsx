@@ -17,8 +17,10 @@ import React, { useState } from "react";
 import AddIcon from "@mui/icons-material/Add";
 import { useDispatch } from "react-redux";
 import { addJob } from "../store/slices/jobSlice";
+import { useNavigate } from "react-router";
 function AddJob() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const initialState = {
     position: "",
     company: "",
@@ -45,6 +47,7 @@ function AddJob() {
     e.preventDefault();
     dispatch(addJob(formData));
     setFormData(initialState);
+    navigate("/");
   };
   return (
     <div style={{ padding: "20px", margin: "auto" }}>
