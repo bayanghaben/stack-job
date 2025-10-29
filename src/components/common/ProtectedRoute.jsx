@@ -1,26 +1,20 @@
-import React, { useContext, useEffect } from "react";
-import { Navigate, Outlet } from "react-router";
-import { AuthContext, useAuth } from "../../context/AuthContext";
-import NavBar from "../../layout/NavBar/NavBar";
-import SideMenu from "../../layout/SideMenu/SideMenu";
+import React from 'react'
+import { Navigate, Outlet } from 'react-router'
+import { useAuth } from '../../context/AuthContext'
+import NavBar from '../../layout/NavBar/NavBar'
+import SideMenu from '../../layout/SideMenu/SideMenu'
 
 function ProtectedRoute() {
-  console.log("ProtectedRoute");
-  const { isAuthenticated } = useAuth();
-  console.log(isAuthenticated);
-  useEffect(() => {
-    console.log(isAuthenticated, "isAuthenticated");
-  }, [isAuthenticated]);
-  //   const isAuthenticated = true;
+  const { isAuthenticated } = useAuth()
   return (
     <div>
       {!isAuthenticated ? (
-        <Navigate to={"login"} />
+        <Navigate to={'login'} />
       ) : (
         <div>
           <div>
             <NavBar />
-            <div style={{ display: "flex" }}>
+            <div style={{ display: 'flex' }}>
               <SideMenu />
               <Outlet />
             </div>
@@ -28,7 +22,7 @@ function ProtectedRoute() {
         </div>
       )}
     </div>
-  );
+  )
 }
 
-export default ProtectedRoute;
+export default ProtectedRoute
