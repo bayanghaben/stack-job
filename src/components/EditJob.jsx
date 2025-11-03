@@ -1,62 +1,64 @@
-import { PlusOneOutlined } from "@mui/icons-material";
 import {
-  Box,
   Button,
-  Card,
-  CardContent,
-  IconButton,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  InputLabel,
+  MenuItem,
+  Select,
   TextField,
-  Typography,
 } from "@mui/material";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-
-import React, { useState } from "react";
-import AddIcon from "@mui/icons-material/Add";
+import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { addJob } from "../store/slices/jobSlice";
-import { useNavigate } from "react-router";
-function AddJob() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+import { updateJob } from "../store/slices/jobSlice";
+
+function EditJob({ open, handleClose, job }) {
   const initialState = {
     position: "",
     company: "",
     location: "",
     salary: "",
     jobURL: "",
-    status: 1,
+    status: "",
     dateApplied: "",
     phone: "",
     email: "",
     notes: "",
+    id: "",
   };
+  console.log(job, "jooob----b");
   const [formData, setFormData] = useState(initialState);
-
+  const dispatch = useDispatch();
+  useEffect(() => {
+    setFormData(job);
+  }, [job]);
   const handleChange = (e) => {
     const { name, value } = e.target;
-    console.log(value);
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
-
-  const handleSubmitJob = (e) => {
-    e.preventDefault();
-    dispatch(addJob(formData));
-    setFormData(initialState);
-    navigate("/");
+  const handleSubmit = () => {
+    dispatch(updateJob(formData));
+    handleClose();
   };
   return (
-    <div style={{ padding: "20px", margin: "auto" }}>
-      <Typography variant="h1"> Add New Job Application</Typography>
-      <Card sx={{ marginTop: "20px" }}>
-        <CardContent>
+    <React.Fragment>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        PaperProps={{
+          sx: {
+            borderRadius: "16px", // or '1rem', '20px', etc.
+            width: "500px",
+          },
+        }}
+      >
+        <DialogTitle>{"Edit Job"}</DialogTitle>
+        <DialogContent>
           <form
-            onSubmit={handleSubmitJob}
+            onSubmit={handleSubmit}
             style={{
               padding: "5px",
               display: "flex",
@@ -104,7 +106,14 @@ function AddJob() {
               onChange={handleChange}
               name="jobURL"
             />
-
+            <TextField
+              sx={{ marginTop: "5px" }}
+              fullWidth
+              label={"jobURL"}
+              value={formData.jobURL}
+              onChange={handleChange}
+              name="jobURL"
+            />
             <TextField
               sx={{ marginTop: "5px" }}
               fullWidth
@@ -154,18 +163,20 @@ function AddJob() {
               value={formData.notes}
               onChange={handleChange}
             />
-            <Button
-              variant="contained"
-              sx={{ margin: "" }}
-              onClick={handleSubmitJob}
-            >
-              Save
-            </Button>
           </form>
-        </CardContent>
-      </Card>
-    </div>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button variant="contained" color="primary" onClick={handleSubmit}>
+            Update
+          </Button>
+          <Button variant="contained" color="secondary" onClick={handleClose}>
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </React.Fragment>
   );
 }
 
-export default AddJob;
+export default EditJob;

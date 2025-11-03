@@ -6,27 +6,50 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteJob, fetchJobs } from "../store/slices/jobSlice";
 import { useNavigate } from "react-router";
 import AlertDialog from "../components/common/AlertDialog";
+import EditJob from "../components/EditJob.jsx";
+import JobDetails from "../components/JobDetails.jsx";
 
 function Home() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [openDeleteDialog, setOpenDeleteDialog] = React.useState(false);
-  const handleOpenDeleteDialog = () => {
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [openJobDetails, setOpenJobDetails] = useState(false);
+  const handleOpenDeleteDialog = (job) => {
     setOpenDeleteDialog(true);
+    setSelectedJob(job);
   };
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
   };
+
+  const handleCloseJobDetailsDialog = () => {
+    setOpenJobDetails(false);
+  };
   const handleAddJob = () => {
     navigate("/new-job");
   };
+
+  const handleEdit = (job) => {
+    setOpenEditModal(true);
+    setSelectedJob(job);
+  };
+  const handleCloseEditModal = () => {
+    setOpenEditModal(false);
+  };
+  const handleViewJob = (job) => {
+    setOpenJobDetails(true);
+    setSelectedJob(job);
+  };
   const data = useSelector((state) => state.jobs.jobs);
   console.log(data, "jobs");
+  const [selectJob, setSelectedJob] = useState();
+  console.log(selectJob, "selectJob");
   useEffect(() => {
     dispatch(fetchJobs());
   }, [dispatch]);
@@ -96,32 +119,52 @@ function Home() {
                 </div>
               </div>
               <div className="flex gap-3">
-                <button className="bg-slate-700/50 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors">
+                <button
+                  onClick={() => handleEdit(job)}
+                  className="bg-slate-700/50 hover:bg-slate-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
                   Edit
                 </button>
-                <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors">
+                <button
+                  onClick={() => handleViewJob(job)}
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition-colors"
+                >
                   View
                 </button>
                 <button
                   className="bg-red-600 hover:bg-red-800 text-white px-4 py-2 rounded-lg transition-colors"
                   onClick={() => {
-                    handleOpenDeleteDialog();
+                    handleOpenDeleteDialog(job);
                   }}
                 >
                   Delete
                 </button>
               </div>
             </div>
-            {openDeleteDialog && (
-              <AlertDialog
-                id={job.id}
-                postion={job.position}
-                open={openDeleteDialog}
-                handleClose={handleCloseDeleteDialog}
-              />
-            )}
           </div>
         ))
+      )}
+      {openDeleteDialog && (
+        <AlertDialog
+          id={selectJob.id}
+          postion={selectJob.position}
+          open={openDeleteDialog}
+          handleClose={handleCloseDeleteDialog}
+        />
+      )}
+      {openEditModal && (
+        <EditJob
+          open={openEditModal}
+          handleClose={handleCloseEditModal}
+          job={selectJob}
+        />
+      )}
+      {openJobDetails && (
+        <JobDetails
+          open={openJobDetails}
+          job={selectJob}
+          handleClose={handleCloseJobDetailsDialog}
+        />
       )}
     </div>
   );

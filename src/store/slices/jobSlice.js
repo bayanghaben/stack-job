@@ -19,8 +19,11 @@ const jobSlice = createSlice({
       toast.success("Job Added Successfully");
     },
     updateJob: (state, action) => {
-      const updatedJob = state.jobs.find((j) => j.id == action.payload.id);
-      state.jobs = [...state.jobs, updatedJob];
+      console.log(action.payload, "---------------store---------------------");
+      const updatedJobIndex = state.jobs.findIndex(
+        (j) => j.id == action.payload.id
+      );
+      state.jobs[updatedJobIndex] = action.payload;
       localStorage.setItem(localStorageKey, JSON.stringify(state.jobs));
       toast.success("Job Updated Successfully");
     },
